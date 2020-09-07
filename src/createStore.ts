@@ -1,4 +1,9 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux'
+import {
+  createStore as createReduxStore,
+  applyMiddleware,
+  combineReducers,
+  Store
+} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { extendSagaWithPromise } from './sagaPromise'
@@ -9,14 +14,14 @@ export const dispatch = (action: any) => {
   return storeCache.dispatch(action)
 }
 
-const createReducers = (reducerModels: Object) => {
+const createReducers = (reducerModels: Object): any => {
   const reducers = generateReducers(reducerModels)
   return combineReducers(reducers)
 }
 
 export default (
   sagaModels: any[],
-  reducerModels: Object,
+  reducerModels: any,
   errorHandler: (error: any) => void,
   disableDevTool: boolean,
   otherMiddlewares: any[]
@@ -31,7 +36,7 @@ export default (
     middleware = composeWithDevTools(middleware)
   }
   const reducers = createReducers(reducerModels)
-  const store = createStore(reducers, middleware)
+  const store = createReduxStore(reducers, middleware)
   const sagas = generateSagas(sagaModels, errorHandler)
   sagas.forEach((saga) => (sagaMiddleware as any).run(saga))
 

@@ -8,7 +8,7 @@ const sagaWrapper = (
   saga: (action: ModelAction<any>) => void,
   errorHandler?: (error: any) => void
 ) =>
-  function*(action: ModelAction<any>) {
+  function* (action: ModelAction<any>) {
     try {
       const res = yield call(saga, action)
       action.resolve(res)
@@ -37,7 +37,7 @@ export function generateSagas(
           method,
           modelName,
           actionType,
-          takeFunction,
+          takeFunction
         } = value.actionExtend as ActionExtend
         if (_modelNameCache.includes(modelName)) {
           throw `throw by duplicate saga model name: ${modelName}, add a different model name :)`
@@ -49,7 +49,7 @@ export function generateSagas(
         }
         currentModelName = modelName
 
-        const wrapper = function*() {
+        const wrapper = function* () {
           yield takeFunction(actionType, sagaWrapper(method, errorHandler))
         }
         watchList.push(call(wrapper))
@@ -57,7 +57,7 @@ export function generateSagas(
     }
     currentModelName && _modelNameCache.push(currentModelName)
 
-    const saga = function*() {
+    const saga = function* () {
       yield all(watchList)
     }
     sagas.push(saga)
@@ -98,7 +98,7 @@ export function generateReducer(
       const {
         method,
         modelName,
-        actionType,
+        actionType
       } = value.actionExtend as ActionExtend
       if (_modelNameCache) {
         if (_modelNameCache.includes(modelName)) {
