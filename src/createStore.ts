@@ -1,8 +1,7 @@
 import {
   createStore as createReduxStore,
   applyMiddleware,
-  combineReducers,
-  Store
+  combineReducers
 } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { composeWithDevTools } from 'redux-devtools-extension'
