@@ -1,8 +1,8 @@
 {
   "name": "redux-saga-easy",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "main": "lib/index.js",
-  "repository": "git@github.com:matthew5-library/redux-saga-easier.git",
+  "repository": "https://github.com/matthew5-library/redux-saga-easy",
   "author": "Matthew5 <jnwu@thoughtworks.com>",
   "license": "MIT",
   "scripts": {
@@ -10,6 +10,10 @@
   },
   "files": [
     "lib"
+  ],
+  "keywords": [
+    "redux",
+    "redux-saga"
   ],
   "dependencies": {
     "redux": "^4.0.5",

@@ -25,7 +25,7 @@ export default new Contacts()
 
 ### create saga
 
-```js
+```javascript
 import { createAction, BaseSaga, ModelAction } from 'redux-saga-easy'
 import {
   all,
@@ -55,7 +55,7 @@ export default new Contacts()
 
 ### create store
 
-```js
+```javascript
 import { createStore } from 'redux-saga-easy'
 
 const sagaModels = [mySaga]
@@ -72,9 +72,9 @@ const store = createStore(
 )
 ```
 
-##### call in page
+### call in page
 
-```js
+```javascript
 import contactsSaga from '@/redux/saga/contacts'
 import contactsReducer from '@/redux/reducers/contacts'
 
