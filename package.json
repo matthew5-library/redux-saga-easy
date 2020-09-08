@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-easy",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "lib/index.js",
   "repository": "https://github.com/matthew5-library/redux-saga-easy",
   "author": "Matthew5 <jnwu@thoughtworks.com>",

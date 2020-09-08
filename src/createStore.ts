@@ -19,8 +19,7 @@ const createReducers = (reducerModels: Object): any => {
 }
 
 export default (
-  sagaModels: any[],
-  reducerModels: any,
+  sagaModels: any,
   errorHandler: (error: any) => void,
   disableDevTool: boolean,
   otherMiddlewares: any[]
@@ -34,7 +33,7 @@ export default (
   if (!disableDevTool) {
     middleware = composeWithDevTools(middleware)
   }
-  const reducers = createReducers(reducerModels)
+  const reducers = createReducers(sagaModels)
   const store = createReduxStore(reducers, middleware)
   const sagas = generateSagas(sagaModels, errorHandler)
   sagas.forEach((saga) => (sagaMiddleware as any).run(saga))

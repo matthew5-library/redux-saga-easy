@@ -20,25 +20,21 @@ const sagaWrapper = (
   }
 
 export function generateSagas(
-  sagaModels: any[],
+  sagaModels: any,
   errorHandler?: (error: any) => void
 ): SagaIterator[] {
   const _actionTypeCache: string[] = []
   const _modelNameCache: string[] = []
 
   const sagas = []
-  sagaModels.forEach((model: any) => {
+  for (const key in sagaModels) {
+    const model = sagaModels[key]
     const watchList: any = []
     let currentModelName
     for (const key in model) {
-      const value = model[key]
-      if (value.actionExtend) {
-        const {
-          method,
-          modelName,
-          actionType,
-          takeFunction
-        } = value.actionExtend as ActionExtend
+      const actionExtend = model[key].actionExtend as ActionExtend
+      if (actionExtend && actionExtend.type === 'Saga') {
+        const { method, modelName, actionType, takeFunction } = actionExtend
         if (_modelNameCache.includes(modelName)) {
           throw `throw by duplicate saga model name: ${modelName}, add a different model name :)`
         }
@@ -61,7 +57,7 @@ export function generateSagas(
       yield all(watchList)
     }
     sagas.push(saga)
-  })
+  }
 
   return sagas
 }
@@ -93,13 +89,9 @@ export function generateReducer(
   const reducerMap = {}
   let currentModelName
   for (const key in reducerModel) {
-    const value = reducerModel[key]
-    if (value.actionExtend) {
-      const {
-        method,
-        modelName,
-        actionType
-      } = value.actionExtend as ActionExtend
+    const actionExtend = reducerModel[key].actionExtend as ActionExtend
+    if (actionExtend && actionExtend.type === 'Reducer') {
+      const { method, modelName, actionType } = actionExtend
       if (_modelNameCache) {
         if (_modelNameCache.includes(modelName)) {
           throw `throw by duplicate reducer model name: ${modelName}, add a different model name :)`

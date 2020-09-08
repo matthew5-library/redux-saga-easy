@@ -1,30 +1,29 @@
-import { generateSagas, generateReducer, generateReducers } from './convertor'
 import {
-  createAction0,
-  createAction,
+  createSaga0,
+  createReducer0,
+  createSaga,
+  createReducer,
   getGenerator0,
   getGenerator,
   getReducer0,
   getReducer,
   getActionType,
-  BaseSaga,
-  BaseReducer
+  SagaModel
 } from './model'
 import { ModelAction0, ModelAction } from './type'
 import createStore from './createStore'
 
 export {
-  generateSagas,
-  generateReducer,
-  generateReducers,
-  createAction0,
-  createAction,
+  createSaga0,
+  createReducer0,
+  createSaga,
+  createReducer,
   getGenerator0,
   getGenerator,
   getReducer0,
   getReducer,
-  BaseSaga,
-  BaseReducer,
+  getActionType,
+  SagaModel,
   ModelAction0,
   ModelAction,
   createStore

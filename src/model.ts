@@ -1,4 +1,4 @@
-import { createAction as _createAction_by_redux_actions } from 'redux-actions'
+import { createAction as createAction_by_redux_actions } from 'redux-actions'
 import { takeLatest, takeEvery } from 'redux-saga/effects'
 import { SagaIterator } from 'redux-saga'
 import { ModelAction0, ModelAction } from './type'
@@ -26,44 +26,47 @@ Object.defineProperty(model, 'name', {
   }
 })
 
-export function createAction0(
+export function createSaga0(
   generator: ModelGenerator0,
   takeFunction?: typeof takeEvery
-): Dispatcher0<ModelAction0>
-export function createAction0(
-  reducer: ModelReducer1<ModelAction<any>>
-): Dispatcher0<ModelAction0>
-export function createAction0(
-  method: Function,
-  takeFunction?: typeof takeEvery
 ): Dispatcher0<ModelAction0> {
-  return _createAction(method, () => {}, takeFunction)
+  return createAction(generator, () => {}, takeFunction, true)
 }
-
-export function createAction<Payload>(
+export function createSaga<Payload>(
   generator: ModelGenerator1<ModelAction<Payload>>,
   takeFunction?: typeof takeEvery
-): Dispatcher<Payload, ModelAction0>
-export function createAction<Payload>(
-  reducer: ModelReducer2<any, ModelAction<Payload>>
-): Dispatcher<Payload, ModelAction0>
-export function createAction<Payload>(
-  method: Function,
-  takeFunction?: typeof takeEvery
 ): Dispatcher<Payload, ModelAction0> {
-  return _createAction(method, (payload: Payload) => payload, takeFunction)
+  return createAction(
+    generator,
+    (payload: Payload) => payload,
+    takeFunction,
+    true
+  )
 }
 
-function _createAction<Payload>(
+export function createReducer0(
+  reducer: ModelReducer1<ModelAction<any>>
+): Dispatcher0<ModelAction0> {
+  return createAction(reducer, () => {})
+}
+export function createReducer<Payload>(
+  reducer: ModelReducer2<any, ModelAction<Payload>>
+): Dispatcher<Payload, ModelAction0> {
+  return createAction(reducer, (payload: Payload) => payload)
+}
+
+function createAction<Payload>(
   method: Function,
   payloadCreator: (payload?: Payload) => Payload,
-  takeFunction?: typeof takeEvery
+  takeFunction?: typeof takeEvery,
+  isCreateSaga?: boolean
 ) {
+  const type = isCreateSaga ? 'Saga' : 'Reducer'
   const actionType = _getActionType(
     model.name,
-    method.name || (model.anonymousGeneratorIndex++).toString()
+    `${type}.${method.name || (model.anonymousGeneratorIndex++).toString()}`
   )
-  const actionCreator = _createAction_by_redux_actions(
+  const actionCreator = createAction_by_redux_actions(
     actionType,
     payloadCreator
   ) as any
@@ -71,11 +74,17 @@ function _createAction<Payload>(
     method,
     modelName: model.name,
     actionType,
-    takeFunction: takeFunction || takeLatest
+    takeFunction: takeFunction || takeLatest,
+    type
   }
 
   // saga put is not effect, you can't use put(action) here
   const dispatcher = function (params, dispatch) {
+    // for createSaga0
+    if (typeof params === 'boolean' && dispatch === undefined) {
+      dispatch = params
+      params = undefined
+    }
     const action = actionCreator(params)
     if (dispatch) {
       globalDispatch(action)
@@ -128,7 +137,7 @@ type ModelGenerator0 = () => SagaIterator
 type ModelGenerator1<Action> = (a: Action) => SagaIterator
 type ModelReducer1<State> = (s: State) => State
 type ModelReducer2<State, Action> = (s: State, a: Action) => State
-type Dispatcher0<R> = () => R
+type Dispatcher0<R> = (dispatch?: boolean) => R
 type Dispatcher<T1, R> = (t1: T1, dispatch?: boolean) => R
 
 export type ActionExtend = {
@@ -136,16 +145,20 @@ export type ActionExtend = {
   modelName: string
   actionType: string
   takeFunction?: typeof takeEvery
+  type: 'Saga' | 'Reducer'
 }
 
-export class BaseSaga {
+export class SagaModel {
   constructor() {
-    model.name = 'SAGA_' + this.constructor.name
+    model.name = this.constructor.name
+    this.createReducers()
+    this.createSagas()
   }
-}
 
-export class BaseReducer {
-  constructor() {
-    model.name = 'REDUCER_' + this.constructor.name
+  createReducers() {
+    // this.reducers
+  }
+  createSagas() {
+    // this.sagas
   }
 }
