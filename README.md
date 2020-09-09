@@ -1,36 +1,22 @@
-# Usage
+# redux-saga-easy
 
-### demo
+A simple and easy way for redux-saga
+
+### Usage
+
+check the demo here
 
 https://github.com/matthew5-template/react-ts-app/tree/redux-saga-easy
 
-### create reducer
+### 1. create a saga model include sagaAction and reducerAction
 
 ```javascript
-import { createAction, BaseReducer, ModelAction } from 'redux-saga-easy'
-
-class Contacts extends BaseReducer {
-  initState: IStore.IContacts = {
-    contact: ''
-  }
-
-  updateContacts = createAction(function updateContacts(
-    state: IStore.IContacts,
-    action: ModelAction<string>
-  ) {
-    return {
-      contact: action.payload
-    }
-  })
-}
-
-export default new Contacts()
-```
-
-### create saga
-
-```javascript
-import { createAction, BaseSaga, ModelAction } from 'redux-saga-easy'
+import {
+  createSaga,
+  createReducer,
+  SagaModel,
+  ModelAction
+} from 'redux-saga-easy'
 import {
   all,
   call,
@@ -46,44 +32,65 @@ const delay = (second: number) => {
   return new Promise((resolve) => setTimeout(resolve, 1000 * second))
 }
 
-class Contacts extends BaseSaga {
-  calculateContacts = createAction(function* get(action: ModelAction<string>) {
+class Contacts extends SagaModel {
+  initState: IStore.IContacts = {
+    contact: 0
+  }
+
+  setContacts = createReducer(function setContacts(
+    state: IStore.IContacts,
+    action: ModelAction<number>
+  ) {
+    return {
+      contact: action.payload
+    }
+  })
+
+  calculateContacts = createSaga(function* calculateContacts(
+    action: ModelAction<number>
+  ) {
     yield call(delay, 1)
-    yield put(reducer.updateContacts(action.payload))
+    const result = action.payload * 2
+    return result
+  })
+
+  updateContacts = createSaga(function* updateContacts(
+    this: Contacts,
+    action: ModelAction<number>
+  ) {
+    const result = yield yield put(this.calculateContacts(action.payload))
+    yield put(this.setContacts(result))
   })
 }
 
 export default new Contacts()
-
 ```
 
-### create store
+### 2. create store by sagaModels
 
 ```javascript
 import { createStore } from 'redux-saga-easy'
+import contacts from '@/redux/saga/contacts'
 
-const sagaModels = [mySaga]
-const reducerModels = {
-  myReducer
+const sagaModels = {
+  contacts
 }
 
 const store = createStore(
   sagaModels,
-  reducerModels,
   errorHandler,
   disableDevTool,
   otherMiddlewares
 )
 ```
 
-### call in page
+### 3. dispatch action on pages
 
 ```javascript
 import contactsSaga from '@/redux/saga/contacts'
-import contactsReducer from '@/redux/reducers/contacts'
 
- onChange = async () => {
-    await contactsSaga.calculateContacts('18511112222', true)
-    await contactsReducer.updateContacts('13022223333', true)
- }
+onChange = async () => {
+  await contactsSaga.updateContacts(100, true)
+  await contactsSaga.setContacts(100, true)
+}
 ```
